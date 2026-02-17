@@ -2,7 +2,9 @@ name: DevSecOps Security Pipeline
 
 on:
   push:
+    branches: [ "master", "main" ]
   pull_request:
+    branches: [ "master", "main" ]
 
 jobs:
   security-scan:
@@ -12,27 +14,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 👈 CRITICAL FIX: Downloads full history so TruffleHog can diff
+          fetch-depth: 0  # Required for history
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # Install Semgrep
       - name: Install Semgrep
         run: pip install semgrep
 
-      # Run TruffleHog (Official Action)
-      # We explicitly tell it to scan only new changes to save time
+      # --- TRUFFLEHOG FIX ---
+      # Removed 'base' and 'head' arguments.
+      # The action will now automatically detect the correct range.
       - name: TruffleHog Secret Scan
         uses: trufflesecurity/trufflehog@main
         with:
-          path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
           extra_args: --debug --only-verified
 
-      # SAST scan
       - name: Run SAST Scan
         run: semgrep --config=p/python .
