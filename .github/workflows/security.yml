@@ -2,9 +2,7 @@ name: DevSecOps Security Pipeline
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   security-scan:
@@ -14,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # <--- CRITICAL FIX: Downloads full history
+          fetch-depth: 0  # 👈 CRITICAL FIX: Downloads full history so TruffleHog can diff
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -25,12 +23,13 @@ jobs:
       - name: Install Semgrep
         run: pip install semgrep
 
-      # Run TruffleHog (official action)
+      # Run TruffleHog (Official Action)
+      # We explicitly tell it to scan only new changes to save time
       - name: TruffleHog Secret Scan
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
-          base: "${{ github.event.repository.default_branch }}"
+          base: ${{ github.event.repository.default_branch }}
           head: HEAD
           extra_args: --debug --only-verified
 
