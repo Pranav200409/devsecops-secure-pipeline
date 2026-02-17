@@ -24,8 +24,12 @@ jobs:
       # Install REAL TruffleHog v3
       - name: Install TruffleHog
         run: |
-          curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          wget https://github.com/trufflesecurity/trufflehog/releases/latest/download/trufflehog_linux_amd64.tar.gz
+          tar -xvzf trufflehog_linux_amd64.tar.gz
+          chmod +x trufflehog
+          sudo mv trufflehog /usr/local/bin/
+          trufflehog --version
+
 
       # Secret scan
       - name: Run Secret Scan
