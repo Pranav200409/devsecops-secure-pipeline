@@ -21,19 +21,13 @@ jobs:
       - name: Install Semgrep
         run: pip install semgrep
 
-      # Install REAL TruffleHog v3
-      - name: Install TruffleHog
-        run: |
-          wget https://github.com/trufflesecurity/trufflehog/releases/latest/download/trufflehog_linux_amd64.tar.gz
-          tar -xvzf trufflehog_linux_amd64.tar.gz
-          chmod +x trufflehog
-          sudo mv trufflehog /usr/local/bin/
-          trufflehog --version
-
-
-      # Secret scan
-      - name: Run Secret Scan
-        run: trufflehog filesystem . --no-verification
+      # Run TruffleHog (official action)
+      - name: TruffleHog Secret Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
 
       # SAST scan
       - name: Run SAST Scan
