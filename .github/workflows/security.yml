@@ -1,0 +1,29 @@
+name: DevSecOps Security Pipeline
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install tools
+        run: |
+          pip install semgrep
+          pip install trufflehog
+
+      - name: Run Secret Scan
+        run: trufflehog filesystem . --no-verification
+
+      - name: Run SAST Scan
+        run: semgrep --config=p/python .
