@@ -49,3 +49,15 @@ jobs:
         -t http://localhost:5000 \
         -r zap_report.html
 
+    - name: Upload ZAP Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: zap-security-report
+        path: zap_report.html
+      
+    - name: Check for High Vulnerabilities
+      run: |
+        if grep -q "High" zap_report.html; then
+          echo "High vulnerabilities found! Failing pipeline."
+          exit 1
+        fi

@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream:README.md
 # DevSecOps Secure Pipeline (Flask)
 
 A hands-on DevSecOps project demonstrating shift-left security and automated CI security scanning.
