@@ -1,4 +1,4 @@
-# DevSecOps Secure Pipeline (Flask)
+# DevSecOps Secure Pipeline Project_1 (Flask)
 
 A hands-on DevSecOps project demonstrating shift-left security and automated CI security scanning.
 
