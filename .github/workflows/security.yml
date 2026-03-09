@@ -7,6 +7,7 @@ on:
     branches: [ "master", "main" ]
 
 jobs:
+
   security-scan:
     runs-on: ubuntu-latest
 
@@ -14,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for history
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -24,9 +25,6 @@ jobs:
       - name: Install Semgrep
         run: pip install semgrep
 
-      # --- TRUFFLEHOG FIX ---
-      # Removed 'base' and 'head' arguments.
-      # The action will now automatically detect the correct range.
       - name: TruffleHog Secret Scan
         uses: trufflesecurity/trufflehog@main
         with:
@@ -34,3 +32,35 @@ jobs:
 
       - name: Run SAST Scan
         run: semgrep --config=p/python .
+
+  build_and_scan:
+    needs: security-scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t secure-flask-app .
+
+      - name: Run Container
+        run: docker run -d -p 5000:5000 secure-flask-app
+
+      - name: Wait for App to Start
+        run: sleep 10
+
+      - name: Run OWASP ZAP Baseline Scan
+        run: |
+          docker run --rm \
+            -u root \
+            -v $(pwd):/zap/wrk/:rw \
+            zaproxy/zap-stable zap-baseline.py \
+            -t http://host.docker.internal:5000 \
+            -r zap_report.html
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-security-report
+          path: zap_report.html
