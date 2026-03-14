@@ -56,7 +56,7 @@ jobs:
             -u root \
             -v $(pwd):/zap/wrk/:rw \
             zaproxy/zap-stable zap-baseline.py \
-            -t http://host.docker.internal:5000 \
+            http://localhost:5000
             -r zap_report.html/
 
       - name: Upload ZAP Report
