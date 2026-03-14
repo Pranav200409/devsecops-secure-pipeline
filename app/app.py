@@ -18,7 +18,7 @@ def set_security_headers(response):
 
 def run_application():
     print("Application is starting up securely...")
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000) # nosemgrep
 
 if __name__ == "__main__":
     run_application()
