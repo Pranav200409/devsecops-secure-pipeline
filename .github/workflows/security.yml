@@ -2,14 +2,11 @@ name: DevSecOps Security Pipeline
 
 on:
   push:
-    branches: [ "master" ]
-
+    branches: [ "main" ]
 
 jobs:
-
   security-scan:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,7 +32,6 @@ jobs:
   build_and_scan:
     needs: security-scan
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
